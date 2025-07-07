@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProWarehouse - Система управления товарами</title>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <title>ProWarehouse Pro - Система управления товарами</title>
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -26,11 +25,13 @@
             --ios-blue: #007aff;
             --ios-dark-blue: #0062cc;
             --success: #4caf50;
+            --success-light: #e8f5e9;
             --error: #f44336;
+            --warning: #ff9800;
         }
         
         body {
-            background: linear-gradient(135deg, #d0d0d0, #a0a0a0);
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
             padding: 20px;
             min-height: 100vh;
             display: flex;
@@ -43,12 +44,14 @@
             max-width: 1400px;
             background: white;
             border: 3px solid #000;
-            border-radius: 12px;
-            box-shadow: 8px 8px 0 var(--win-shadow);
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
             overflow: hidden;
             display: flex;
             flex-direction: column;
             height: 95vh;
+            position: relative;
+            background: linear-gradient(to bottom, #ffffff, #f0f8ff);
         }
         
         /* Windows-style header */
@@ -80,6 +83,7 @@
             align-items: center;
             justify-content: center;
             border: 2px solid white;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
         }
         
         .header-text {
@@ -117,7 +121,7 @@
             justify-content: center;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+            box-shadow: 0 3px 5px rgba(0,0,0,0.3);
             transition: all 0.2s;
             font-size: 18px;
         }
@@ -161,9 +165,21 @@
         .panel-section {
             background: white;
             border: 2px solid var(--win-border);
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 18px;
-            box-shadow: inset 2px 2px 0 #fff, inset -2px -2px 0 #000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .panel-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--ios-blue);
         }
         
         .panel-title {
@@ -225,30 +241,35 @@
             flex-direction: column;
             gap: 25px;
             overflow-y: auto;
+            background: linear-gradient(to bottom, #f9f9f9, #eef5ff);
         }
         
         .tab-container {
             display: flex;
             border-bottom: 2px solid var(--win-border);
             margin-bottom: 20px;
+            background: white;
+            border-radius: 50px;
+            padding: 5px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
         }
         
         .tab {
             padding: 12px 25px;
-            background: var(--win-gray);
-            border: 2px solid var(--win-border);
-            border-bottom: none;
-            border-radius: 10px 10px 0 0;
+            background: transparent;
+            border: none;
+            border-radius: 50px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
+            flex: 1;
+            text-align: center;
         }
         
         .tab.active {
-            background: white;
-            color: var(--win-dark-blue);
-            position: relative;
-            top: 2px;
+            background: var(--ios-blue);
+            color: white;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
         }
         
         .tab-content {
@@ -277,15 +298,27 @@
             border: 2px solid var(--win-border);
             border-radius: 12px;
             padding: 20px;
-            box-shadow: inset 2px 2px 0 #fff, inset -2px -2px 0 #000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             transition: all 0.3s;
             display: flex;
             flex-direction: column;
+            position: relative;
+            overflow: hidden;
         }
         
         .product-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--ios-blue);
         }
         
         .product-card h3 {
@@ -318,6 +351,7 @@
             font-weight: bold;
             border: 2px solid var(--win-border);
             font-size: 18px;
+            background: linear-gradient(to right, #e0f0ff, #cce5ff);
         }
         
         /* Scanner section */
@@ -327,72 +361,18 @@
             border-radius: 12px;
             padding: 25px;
             text-align: center;
-            box-shadow: inset 2px 2px 0 #fff, inset -2px -2px 0 #000;
-        }
-        
-        .camera-container {
-            width: 100%;
-            height: 300px;
-            background: #333;
-            border-radius: 12px;
-            overflow: hidden;
-            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 3px solid var(--win-border);
         }
         
-        #cameraPreview {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .scanner-overlay {
+        .scanner-section::before {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .scanner-frame {
-            width: 80%;
-            height: 200px;
-            border: 4px solid var(--ios-blue);
-            border-radius: 12px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5);
-        }
-        
-        .scanner-beam {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--ios-blue);
-            box-shadow: 0 0 10px rgba(0, 102, 255, 0.8);
-            animation: scan 2s infinite linear;
-        }
-        
-        @keyframes scan {
-            0% { top: 0; }
-            50% { top: calc(100% - 4px); }
-            100% { top: 0; }
-        }
-        
-        .scanner-controls {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 20px;
+            height: 5px;
+            background: var(--warning);
         }
         
         /* Print section */
@@ -401,7 +381,17 @@
             background: white;
             border: 2px solid var(--win-border);
             border-radius: 12px;
-            box-shadow: inset 2px 2px 0 #fff, inset -2px -2px 0 #000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .print-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--success);
         }
         
         .print-grid {
@@ -417,13 +407,24 @@
             border-radius: 10px;
             text-align: center;
             border: 2px solid var(--win-border);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             transition: all 0.3s;
+            position: relative;
         }
         
         .print-item:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .print-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--ios-blue);
         }
         
         .print-item h4 {
@@ -439,7 +440,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -486,6 +487,52 @@
             max-width: 70%;
         }
         
+        /* Success animation */
+        .success-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: successPulse 0.5s ease-in-out;
+            display: none;
+        }
+        
+        @keyframes successPulse {
+            0% { opacity: 0; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        .success-icon {
+            font-size: 120px;
+            color: var(--success);
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px rgba(76, 175, 80, 0.7);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+        
+        .success-message {
+            font-size: 42px;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            max-width: 80%;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.8);
+            margin-bottom: 30px;
+        }
+        
         /* Footer */
         .footer {
             background: var(--win-gray);
@@ -514,46 +561,150 @@
             color: var(--win-dark-blue);
         }
         
-        /* Success message */
-        .success-message {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--success);
+        /* Reset button */
+        .reset-button {
+            background: linear-gradient(to right, var(--error), #d32f2f);
             color: white;
-            padding: 15px 25px;
+            border: none;
             border-radius: 50px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            padding: 8px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 18px;
+            gap: 8px;
             font-weight: 600;
-            z-index: 100;
-            animation: slideIn 0.5s ease;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        }
+        
+        .reset-button:hover {
+            background: linear-gradient(to right, #d32f2f, #b71c1c);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            animation: modalIn 0.4s ease-out;
+        }
+        
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            color: var(--win-dark-blue);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .modal-input {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: 2px solid var(--win-border);
+            border-radius: 50px;
+            font-size: 18px;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .modal-input:focus {
+            border-color: var(--ios-blue);
+            box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.2);
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .modal-button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 50px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .modal-button.confirm {
+            background: linear-gradient(to right, var(--success), #388e3c);
+            color: white;
+        }
+        
+        .modal-button.cancel {
+            background: linear-gradient(to right, var(--win-gray), #d0d0d0);
+            color: #555;
+        }
+        
+        /* Reset animation */
+        .reset-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
             display: none;
         }
         
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        .reset-icon {
+            font-size: 100px;
+            color: var(--ios-blue);
+            margin-bottom: 30px;
+            animation: spin 1.5s linear infinite;
         }
         
-        /* Cell selector */
-        .cell-selector {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 15px 0;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
-        .cell-selector select {
-            padding: 12px 15px;
-            border-radius: 50px;
-            border: 2px solid var(--win-border);
-            font-size: 16px;
-            background: white;
-            flex-grow: 1;
+        .reset-message {
+            font-size: 36px;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            max-width: 80%;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            margin-bottom: 20px;
         }
         
         /* Responsive */
@@ -574,11 +725,11 @@
         <div class="header">
             <div class="logo">
                 <div class="logo-icon">
-                    <i class="fas fa-box"></i>
+                    <i class="fas fa-boxes"></i>
                 </div>
                 <div class="header-text">
-                    <h1>ProWarehouse</h1>
-                    <div class="header-subtitle">Система управления товарами и ячейками</div>
+                    <h1>ProWarehouse Pro</h1>
+                    <div class="header-subtitle">Профессиональная система управления товарами</div>
                 </div>
             </div>
             <div class="control-buttons">
@@ -617,9 +768,9 @@
                         <i class="fas fa-plus-circle"></i>
                         Добавить товар
                     </button>
-                    <button class="ios-button" id="generateQrBtn">
-                        <i class="fas fa-qrcode"></i>
-                        Сгенерировать QR для ячейки
+                    <button class="ios-button" id="generateBarcodeBtn">
+                        <i class="fas fa-barcode"></i>
+                        Сгенерировать штрих-код для ячейки
                     </button>
                     <button class="ios-button" id="issueItemsBtn">
                         <i class="fas fa-truck-loading"></i>
@@ -642,25 +793,12 @@
                         <i class="fas fa-camera"></i>
                         Сканер
                     </div>
-                    <p>Отсканируйте штрих-код или QR-код с помощью камеры:</p>
+                    <p>Отсканируйте штрих-код с помощью камеры:</p>
                     
-                    <div class="camera-container">
-                        <video id="cameraPreview" autoplay playsinline></video>
-                        <div class="scanner-overlay">
-                            <div class="scanner-frame">
-                                <div class="scanner-beam"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="scanner-controls">
-                        <button class="ios-button" id="startCameraBtn">
-                            <i class="fas fa-play"></i>
-                            Включить камеру
-                        </button>
-                        <button class="ios-button" id="stopCameraBtn">
-                            <i class="fas fa-stop"></i>
-                            Выключить
+                    <div class="scanner-controls" style="margin-top: 20px;">
+                        <button class="ios-button" id="simulateScanBtn">
+                            <i class="fas fa-camera"></i>
+                            Симулировать сканирование
                         </button>
                     </div>
                     
@@ -673,7 +811,7 @@
             <div class="right-panel">
                 <div class="tab-container">
                     <div class="tab active" data-tab="products">Товары в системе</div>
-                    <div class="tab" data-tab="codes">Коды для печати</div>
+                    <div class="tab" data-tab="codes">Штрих-коды для печати</div>
                     <div class="tab" data-tab="cells">Управление ячейками</div>
                 </div>
                 
@@ -688,30 +826,36 @@
                 <div id="codesTab" class="tab-content">
                     <div class="print-section">
                         <div class="print-grid" id="printGrid">
-                            <!-- Generated barcodes and QR codes will appear here -->
+                            <!-- Generated barcodes will appear here -->
                         </div>
                     </div>
                 </div>
                 
                 <div id="cellsTab" class="tab-content">
                     <div class="panel-section">
-                        <h2 style="color: var(--win-dark-blue); margin-bottom: 20px;">Управление ячейками хранения</h2>
+                        <h2 style="color: var(--win-dark-blue); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-warehouse"></i>
+                            Управление ячейками хранения
+                        </h2>
                         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
-                            <div class="cell-card" style="background: #e6f7ff; padding: 20px; border-radius: 10px; border: 2px solid var(--win-border);">
+                            <div class="cell-card" style="background: #e6f7ff; padding: 20px; border-radius: 10px; border: 2px solid var(--win-border); position: relative;">
+                                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--ios-blue);"></div>
                                 <h3 style="display: flex; align-items: center; gap: 10px; color: var(--win-dark-blue);">
                                     <i class="fas fa-cube"></i> Ячейка P1
                                 </h3>
                                 <p style="margin: 10px 0;"><strong>Товаров:</strong> 2</p>
                                 <p><strong>Статус:</strong> <span style="color: var(--success);">Свободна</span></p>
                             </div>
-                            <div class="cell-card" style="background: #fff8e6; padding: 20px; border-radius: 10px; border: 2px solid var(--win-border);">
+                            <div class="cell-card" style="background: #fff8e6; padding: 20px; border-radius: 10px; border: 2px solid var(--win-border); position: relative;">
+                                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--warning);"></div>
                                 <h3 style="display: flex; align-items: center; gap: 10px; color: var(--win-dark-blue);">
                                     <i class="fas fa-cube"></i> Ячейка P2
                                 </h3>
                                 <p style="margin: 10px 0;"><strong>Товаров:</strong> 3</p>
                                 <p><strong>Статус:</strong> <span style="color: var(--success);">Свободна</span></p>
                             </div>
-                            <div class="cell-card" style="background: #ffebee; padding: 20px; border-radius: 10px; border: 2px solid var(--win-border);">
+                            <div class="cell-card" style="background: #ffebee; padding: 20px; border-radius: 10px; border: 2px solid var(--win-border); position: relative;">
+                                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--error);"></div>
                                 <h3 style="display: flex; align-items: center; gap: 10px; color: var(--win-dark-blue);">
                                     <i class="fas fa-cube"></i> Ячейка P3
                                 </h3>
@@ -739,19 +883,63 @@
                     <span>Память: <span id="memoryStatus">45%</span></span>
                 </div>
             </div>
-            <div>ProWarehouse v2.0 | © 2023</div>
+            <div>
+                <button class="reset-button" id="resetBtn">
+                    <i class="fas fa-redo"></i>
+                    Сброс системы
+                </button>
+            </div>
         </div>
     </div>
     
+    <!-- Error Animation -->
     <div class="error-animation" id="errorAnimation">
         <div class="error-icon"><i class="fas fa-exclamation-triangle"></i></div>
         <div class="error-message" id="errorMessage">ОШИБКА! Код не найден в системе</div>
         <div class="error-submessage">Проверьте правильность сканирования и повторите попытку</div>
     </div>
     
-    <div class="success-message" id="successMessage">
-        <i class="fas fa-check-circle"></i>
-        <span id="successText">Товар успешно добавлен!</span>
+    <!-- Success Animation -->
+    <div class="success-animation" id="successAnimation">
+        <div class="success-icon"><i class="fas fa-check-circle"></i></div>
+        <div class="success-message" id="successMessage">УСПЕШНО! Операция завершена</div>
+    </div>
+    
+    <!-- Reset Animation -->
+    <div class="reset-animation" id="resetAnimation">
+        <div class="reset-icon"><i class="fas fa-redo"></i></div>
+        <div class="reset-message" id="resetMessage">Сброс системы...</div>
+    </div>
+    
+    <!-- Product Name Modal -->
+    <div class="modal" id="productNameModal">
+        <div class="modal-content">
+            <div class="modal-title">
+                <i class="fas fa-tag"></i>
+                Введите название товара
+            </div>
+            <input type="text" class="modal-input" id="productNameInput" placeholder="Например: Ноутбук Dell XPS">
+            <div class="modal-buttons">
+                <button class="modal-button cancel" id="cancelProductBtn">Отмена</button>
+                <button class="modal-button confirm" id="confirmProductBtn">Добавить</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Password Modal -->
+    <div class="modal" id="passwordModal">
+        <div class="modal-content">
+            <div class="modal-title">
+                <i class="fas fa-lock"></i>
+                Подтверждение сброса
+            </div>
+            <p style="margin-bottom: 20px; color: #555;">Введите пароль для сброса системы:</p>
+            <input type="password" class="modal-input" id="passwordInput" placeholder="Введите пароль 7533">
+            <div class="modal-buttons">
+                <button class="modal-button cancel" id="cancelResetBtn">Отмена</button>
+                <button class="modal-button confirm" id="confirmResetBtn">Сбросить</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -759,7 +947,6 @@
         let products = JSON.parse(localStorage.getItem('products')) || [];
         let cells = JSON.parse(localStorage.getItem('cells')) || {};
         let currentCell = 'P1';
-        let cameraStream = null;
         
         // DOM Elements
         const productGrid = document.getElementById('productGrid');
@@ -767,13 +954,17 @@
         const scanResult = document.getElementById('scanResult');
         const errorAnimation = document.getElementById('errorAnimation');
         const errorMessage = document.getElementById('errorMessage');
+        const successAnimation = document.getElementById('successAnimation');
         const successMessage = document.getElementById('successMessage');
-        const successText = document.getElementById('successText');
+        const resetAnimation = document.getElementById('resetAnimation');
+        const resetMessage = document.getElementById('resetMessage');
         const itemsCount = document.getElementById('itemsCount');
         const cellsCount = document.getElementById('cellsCount');
         const lastAction = document.getElementById('lastAction');
-        const cameraPreview = document.getElementById('cameraPreview');
         const cellSelector = document.getElementById('cellSelector');
+        const productNameModal = document.getElementById('productNameModal');
+        const passwordModal = document.getElementById('passwordModal');
+        const productNameInput = document.getElementById('productNameInput');
         
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
@@ -792,11 +983,15 @@
             });
             
             // Event listeners
-            document.getElementById('addProductBtn').addEventListener('click', addProduct);
-            document.getElementById('generateQrBtn').addEventListener('click', generateQrForCell);
+            document.getElementById('addProductBtn').addEventListener('click', showProductNameModal);
+            document.getElementById('generateBarcodeBtn').addEventListener('click', generateBarcodeForCell);
             document.getElementById('issueItemsBtn').addEventListener('click', issueItems);
-            document.getElementById('startCameraBtn').addEventListener('click', startCamera);
-            document.getElementById('stopCameraBtn').addEventListener('click', stopCamera);
+            document.getElementById('simulateScanBtn').addEventListener('click', simulateScan);
+            document.getElementById('resetBtn').addEventListener('click', showPasswordModal);
+            document.getElementById('cancelProductBtn').addEventListener('click', closeProductNameModal);
+            document.getElementById('confirmProductBtn').addEventListener('click', addProductWithName);
+            document.getElementById('cancelResetBtn').addEventListener('click', closePasswordModal);
+            document.getElementById('confirmResetBtn').addEventListener('click', resetSystem);
             
             // Control buttons
             document.querySelector('.control-button.minimize').addEventListener('click', () => {
@@ -834,6 +1029,233 @@
                     Math.floor(Math.random() * 20) + 35 + '%';
             }, 3000);
         });
+        
+        // Show product name modal
+        function showProductNameModal() {
+            productNameInput.value = '';
+            productNameModal.style.display = 'flex';
+        }
+        
+        // Close product name modal
+        function closeProductNameModal() {
+            productNameModal.style.display = 'none';
+        }
+        
+        // Add product with custom name
+        function addProductWithName() {
+            const productName = productNameInput.value.trim();
+            
+            if (!productName) {
+                alert('Пожалуйста, введите название товара');
+                return;
+            }
+            
+            addProduct(productName);
+            closeProductNameModal();
+        }
+        
+        // Add product
+        function addProduct(name) {
+            const productId = 'PRD-' + Date.now().toString().slice(-6);
+            const barcode = 'BC' + Math.floor(100000 + Math.random() * 900000);
+            
+            // Create product
+            const product = {
+                id: productId,
+                name: name,
+                barcode: barcode,
+                cell: currentCell
+            };
+            
+            products.push(product);
+            saveToLocalStorage();
+            updateProductDisplay();
+            updateSystemStats();
+            
+            // Generate barcode for printing
+            generateBarcodeForPrinting(barcode, name);
+            
+            // Show success
+            showSuccess(`Товар "${name}" добавлен в ячейку ${currentCell}`);
+            
+            lastAction.textContent = `Добавлен товар: ${name} в ${currentCell}`;
+        }
+        
+        // Generate barcode for printing
+        function generateBarcodeForPrinting(barcode, name) {
+            const printItem = document.createElement('div');
+            printItem.className = 'print-item';
+            
+            const canvas = document.createElement('canvas');
+            printItem.appendChild(canvas);
+            
+            const label = document.createElement('h4');
+            label.textContent = name;
+            printItem.appendChild(label);
+            
+            const barcodeLabel = document.createElement('p');
+            barcodeLabel.textContent = barcode;
+            barcodeLabel.style.fontFamily = 'monospace';
+            barcodeLabel.style.fontSize = '14px';
+            printItem.appendChild(barcodeLabel);
+            
+            printGrid.appendChild(printItem);
+            
+            // Generate barcode
+            JsBarcode(canvas, barcode, {
+                format: "CODE128",
+                displayValue: false,
+                fontSize: 12,
+                height: 50,
+                margin: 10
+            });
+        }
+        
+        // Generate barcode for cell
+        function generateBarcodeForCell() {
+            if (products.length === 0) {
+                showError('Нет товаров для генерации штрих-кода');
+                return;
+            }
+            
+            // Find products in current cell
+            const cellProducts = products.filter(p => p.cell === currentCell);
+            if (cellProducts.length === 0) {
+                showError('В текущей ячейке нет товаров');
+                return;
+            }
+            
+            // Create barcode content
+            const barcodeContent = `CELL-${currentCell}-${cellProducts.length}`;
+            
+            // Create barcode element
+            const printItem = document.createElement('div');
+            printItem.className = 'print-item';
+            
+            const canvas = document.createElement('canvas');
+            canvas.id = `barcode-${currentCell}`;
+            printItem.appendChild(canvas);
+            
+            const label = document.createElement('h4');
+            label.textContent = `Ячейка ${currentCell}`;
+            printItem.appendChild(label);
+            
+            const countLabel = document.createElement('p');
+            countLabel.textContent = `Товаров: ${cellProducts.length}`;
+            countLabel.style.color = '#666';
+            printItem.appendChild(countLabel);
+            
+            printGrid.appendChild(printItem);
+            
+            // Generate barcode
+            JsBarcode(`#barcode-${currentCell}`, barcodeContent, {
+                format: "CODE128",
+                displayValue: true,
+                fontSize: 14,
+                height: 50,
+                margin: 10
+            });
+            
+            // Switch to codes tab
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector('.tab[data-tab="codes"]').classList.add('active');
+            document.getElementById('codesTab').classList.add('active');
+            
+            lastAction.textContent = `Сгенерирован штрих-код для ячейки: ${currentCell}`;
+            showSuccess(`Сгенерирован штрих-код для ячейки ${currentCell}`);
+        }
+        
+        // Simulate scan
+        function simulateScan() {
+            if (products.length > 0) {
+                const randomProduct = products[Math.floor(Math.random() * products.length)];
+                
+                scanResult.innerHTML = `
+                    <div style="background: #e8f5e9; padding: 20px; border-radius: 12px; border: 2px solid var(--success);">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                            <i class="fas fa-check-circle" style="font-size: 36px; color: var(--success);"></i>
+                            <h3 style="color: var(--success);">Товар распознан!</h3>
+                        </div>
+                        <p><strong>Название:</strong> ${randomProduct.name}</p>
+                        <p><strong>Штрих-код:</strong> ${randomProduct.barcode}</p>
+                        <p><strong>Ячейка:</strong> ${randomProduct.cell}</p>
+                    </div>
+                `;
+                
+                lastAction.textContent = `Отсканирован товар: ${randomProduct.name}`;
+            } else {
+                showError('Нет товаров для сканирования');
+            }
+        }
+        
+        // Issue items
+        function issueItems() {
+            if (products.length === 0) {
+                showError('Нет товаров для выдачи');
+                return;
+            }
+            
+            // Show confirmation
+            if (confirm(`Вы уверены, что хотите выдать все товары (${products.length} шт.)?`)) {
+                // Remove all products
+                products = [];
+                saveToLocalStorage();
+                updateProductDisplay();
+                updateSystemStats();
+                
+                // Show success animation
+                successMessage.textContent = 'Все товары успешно выданы!';
+                successAnimation.style.display = 'flex';
+                
+                setTimeout(() => {
+                    successAnimation.style.display = 'none';
+                }, 3000);
+                
+                lastAction.textContent = 'Все товары выданы и удалены из системы';
+            }
+        }
+        
+        // Show password modal
+        function showPasswordModal() {
+            document.getElementById('passwordInput').value = '';
+            passwordModal.style.display = 'flex';
+        }
+        
+        // Close password modal
+        function closePasswordModal() {
+            passwordModal.style.display = 'none';
+        }
+        
+        // Reset system
+        function resetSystem() {
+            const password = document.getElementById('passwordInput').value;
+            
+            if (password !== '7533') {
+                showError('Неверный пароль! Попробуйте еще раз.');
+                return;
+            }
+            
+            closePasswordModal();
+            
+            // Show reset animation
+            resetAnimation.style.display = 'flex';
+            
+            setTimeout(() => {
+                // Clear localStorage
+                localStorage.removeItem('products');
+                localStorage.removeItem('cells');
+                
+                // Reset products array
+                products = [];
+                
+                // Hide reset animation
+                resetAnimation.style.display = 'none';
+                
+                // Reload the page to reset UI
+                location.reload();
+            }, 2000);
+        }
         
         // Update product display
         function updateProductDisplay() {
@@ -882,210 +1304,6 @@
             });
         }
         
-        // Add product
-        function addProduct() {
-            const productId = 'PRD-' + Date.now().toString().slice(-6);
-            const barcode = 'BC' + Math.floor(100000 + Math.random() * 900000);
-            const productNames = [
-                "Ноутбук Dell XPS", "Смартфон iPhone 13", "Наушники Sony WH-1000XM4", 
-                "Планшет Samsung Galaxy Tab", "Флешка Kingston 128GB", "Монитор LG UltraGear",
-                "Клавиатура Logitech MX", "Мышь Razer DeathAdder", "Внешний диск Seagate 2TB",
-                "Роутер TP-Link Archer", "Кабель HDMI Premium", "Зарядное устройство USB-C"
-            ];
-            const productName = productNames[Math.floor(Math.random() * productNames.length)];
-            
-            // Create product
-            const product = {
-                id: productId,
-                name: productName,
-                barcode: barcode,
-                cell: currentCell
-            };
-            
-            products.push(product);
-            saveToLocalStorage();
-            updateProductDisplay();
-            updateSystemStats();
-            
-            // Generate barcode for printing
-            generateBarcodeForPrinting(barcode, productName);
-            
-            // Show success message
-            successText.textContent = `Товар "${productName}" добавлен в ячейку ${currentCell}`;
-            successMessage.style.display = 'flex';
-            setTimeout(() => {
-                successMessage.style.display = 'none';
-            }, 3000);
-            
-            lastAction.textContent = `Добавлен товар: ${productName} в ${currentCell}`;
-        }
-        
-        // Generate barcode for printing
-        function generateBarcodeForPrinting(barcode, name) {
-            const printItem = document.createElement('div');
-            printItem.className = 'print-item';
-            
-            const canvas = document.createElement('canvas');
-            printItem.appendChild(canvas);
-            
-            const label = document.createElement('h4');
-            label.textContent = name;
-            printItem.appendChild(label);
-            
-            const barcodeLabel = document.createElement('p');
-            barcodeLabel.textContent = barcode;
-            barcodeLabel.style.fontFamily = 'monospace';
-            barcodeLabel.style.fontSize = '14px';
-            printItem.appendChild(barcodeLabel);
-            
-            printGrid.appendChild(printItem);
-            
-            // Generate barcode
-            JsBarcode(canvas, barcode, {
-                format: "CODE128",
-                displayValue: false,
-                fontSize: 12,
-                height: 50,
-                margin: 10
-            });
-        }
-        
-        // Generate QR for cell
-        function generateQrForCell() {
-            if (products.length === 0) {
-                showError('Нет товаров для генерации QR');
-                return;
-            }
-            
-            // Find products in current cell
-            const cellProducts = products.filter(p => p.cell === currentCell);
-            if (cellProducts.length === 0) {
-                showError('В текущей ячейке нет товаров');
-                return;
-            }
-            
-            // Create QR content
-            const qrContent = JSON.stringify({
-                cell: currentCell,
-                count: cellProducts.length,
-                products: cellProducts.map(p => p.name)
-            });
-            
-            // Create QR code element
-            const printItem = document.createElement('div');
-            printItem.className = 'print-item';
-            
-            const qrContainer = document.createElement('div');
-            qrContainer.id = `qr-${currentCell}`;
-            qrContainer.style.margin = '0 auto';
-            printItem.appendChild(qrContainer);
-            
-            const label = document.createElement('h4');
-            label.textContent = `Ячейка ${currentCell}`;
-            printItem.appendChild(label);
-            
-            const countLabel = document.createElement('p');
-            countLabel.textContent = `Товаров: ${cellProducts.length}`;
-            countLabel.style.color = '#666';
-            printItem.appendChild(countLabel);
-            
-            printGrid.appendChild(printItem);
-            
-            // Generate QR code
-            new QRCode(qrContainer, {
-                text: qrContent,
-                width: 140,
-                height: 140,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            
-            // Switch to codes tab
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelector('.tab[data-tab="codes"]').classList.add('active');
-            document.getElementById('codesTab').classList.add('active');
-            
-            lastAction.textContent = `Сгенерирован QR для ячейки: ${currentCell}`;
-        }
-        
-        // Start camera
-        function startCamera() {
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-                    .then(function(stream) {
-                        cameraStream = stream;
-                        cameraPreview.srcObject = stream;
-                        scanResult.innerHTML = '<p style="color: var(--success); text-align: center;"><i class="fas fa-check-circle"></i> Камера активирована. Наведите на код для сканирования</p>';
-                    })
-                    .catch(function(error) {
-                        console.error("Ошибка камеры: ", error);
-                        scanResult.innerHTML = '<p style="color: var(--error); text-align: center;"><i class="fas fa-exclamation-triangle"></i> Ошибка доступа к камере. Разрешите доступ к камере в настройках браузера</p>';
-                    });
-            } else {
-                scanResult.innerHTML = '<p style="color: var(--error); text-align: center;"><i class="fas fa-exclamation-triangle"></i> Ваш браузер не поддерживает доступ к камере</p>';
-            }
-        }
-        
-        // Stop camera
-        function stopCamera() {
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-                cameraPreview.srcObject = null;
-                scanResult.innerHTML = '<p style="text-align: center; color: #666;">Камера выключена</p>';
-            }
-        }
-        
-        // Simulate scan
-        function simulateScan() {
-            if (products.length > 0) {
-                const randomProduct = products[Math.floor(Math.random() * products.length)];
-                
-                scanResult.innerHTML = `
-                    <div style="background: #e8f5e9; padding: 20px; border-radius: 12px; border: 2px solid var(--success);">
-                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                            <i class="fas fa-check-circle" style="font-size: 36px; color: var(--success);"></i>
-                            <h3 style="color: var(--success);">Товар распознан!</h3>
-                        </div>
-                        <p><strong>Название:</strong> ${randomProduct.name}</p>
-                        <p><strong>Штрих-код:</strong> ${randomProduct.barcode}</p>
-                        <p><strong>Ячейка:</strong> ${randomProduct.cell}</p>
-                    </div>
-                `;
-                
-                lastAction.textContent = `Отсканирован товар: ${randomProduct.name}`;
-            } else {
-                showError('Нет товаров для сканирования');
-            }
-        }
-        
-        // Issue items
-        function issueItems() {
-            if (products.length === 0) {
-                showError('Нет товаров для выдачи');
-                return;
-            }
-            
-            // Show confirmation
-            if (confirm(`Вы уверены, что хотите выдать все товары (${products.length} шт.)?`)) {
-                // Remove all products
-                products = [];
-                saveToLocalStorage();
-                updateProductDisplay();
-                updateSystemStats();
-                
-                // Show success
-                successText.textContent = `Все товары выданы!`;
-                successMessage.style.display = 'flex';
-                setTimeout(() => {
-                    successMessage.style.display = 'none';
-                }, 3000);
-                
-                lastAction.textContent = 'Все товары выданы и удалены из системы';
-            }
-        }
-        
         // Remove product
         function removeProduct(index) {
             const productName = products[index].name;
@@ -1094,12 +1312,7 @@
             updateProductDisplay();
             updateSystemStats();
             
-            // Show success
-            successText.textContent = `Товар "${productName}" удалён`;
-            successMessage.style.display = 'flex';
-            setTimeout(() => {
-                successMessage.style.display = 'none';
-            }, 3000);
+            showSuccess(`Товар "${productName}" удалён`);
             
             lastAction.textContent = `Товар удалён: ${productName}`;
         }
@@ -1114,6 +1327,16 @@
             }, 4000);
             
             lastAction.textContent = `Ошибка: ${message}`;
+        }
+        
+        // Show success animation
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successAnimation.style.display = 'flex';
+            
+            setTimeout(() => {
+                successAnimation.style.display = 'none';
+            }, 3000);
         }
         
         // Update system stats
