@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProWarehouse Pro - Система управления товарами</title>
+    <title>StockMaster Pro - Система управления складом</title>
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -15,23 +15,21 @@
         }
         
         :root {
-            --win-blue: #0066cc;
-            --win-dark-blue: #004e99;
-            --win-light-blue: #3399ff;
-            --win-gray: #e6e6e6;
-            --win-dark-gray: #cccccc;
-            --win-border: #a0a0a0;
-            --win-shadow: rgba(0, 0, 0, 0.3);
-            --ios-blue: #007aff;
-            --ios-dark-blue: #0062cc;
-            --success: #4caf50;
-            --success-light: #e8f5e9;
-            --error: #f44336;
-            --warning: #ff9800;
+            --primary: #2c6fbb;
+            --primary-dark: #1e5499;
+            --primary-light: #4a8bd6;
+            --secondary: #5a6268;
+            --success: #28a745;
+            --error: #dc3545;
+            --warning: #ffc107;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --border: #dee2e6;
+            --gray: #e9ecef;
         }
         
         body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            background: linear-gradient(135deg, #e6f2ff, #cce5ff);
             padding: 20px;
             min-height: 100vh;
             display: flex;
@@ -43,47 +41,42 @@
             width: 100%;
             max-width: 1400px;
             background: white;
-            border: 3px solid #000;
             border-radius: 15px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
             overflow: hidden;
             display: flex;
             flex-direction: column;
             height: 95vh;
-            position: relative;
-            background: linear-gradient(to bottom, #ffffff, #f0f8ff);
         }
         
-        /* Windows-style header */
+        /* Header */
         .header {
-            background: linear-gradient(to right, var(--win-dark-blue), var(--win-blue));
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
             color: white;
-            padding: 15px 25px;
+            padding: 22px 35px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 3px solid #000;
             position: relative;
         }
         
         .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 18px;
         }
         
         .logo-icon {
-            font-size: 28px;
-            color: #fff;
-            background: var(--win-light-blue);
-            width: 48px;
-            height: 48px;
+            font-size: 36px;
+            color: white;
+            background: var(--primary-light);
+            width: 55px;
+            height: 55px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 2px solid white;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
         
         .header-text {
@@ -92,55 +85,42 @@
         }
         
         .header h1 {
-            font-size: 28px;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            font-size: 32px;
+            font-weight: 700;
             letter-spacing: 0.5px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
         }
         
         .header-subtitle {
-            font-size: 14px;
+            font-size: 15px;
             opacity: 0.9;
-            margin-top: 3px;
+            margin-top: 5px;
         }
         
         /* Control buttons */
         .control-buttons {
             display: flex;
-            gap: 10px;
+            gap: 15px;
         }
         
         .control-button {
-            width: 32px;
-            height: 32px;
-            border-radius: 16px;
-            border: 2px solid #fff;
-            background: linear-gradient(to bottom, #f0f0f0, #c0c0c0);
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.25);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 3px 5px rgba(0,0,0,0.3);
-            transition: all 0.2s;
-            font-size: 18px;
+            transition: all 0.3s;
+            color: white;
+            font-size: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
         
         .control-button:hover {
-            transform: scale(1.05);
-        }
-        
-        .control-button.minimize:hover {
-            background: linear-gradient(to bottom, #ffd700, #ffa500);
-        }
-        
-        .control-button.maximize:hover {
-            background: linear-gradient(to bottom, #7cfc00, #32cd32);
-        }
-        
-        .control-button.close:hover {
-            background: linear-gradient(to bottom, #ff8080, #ff0000);
-            color: white;
+            background: rgba(255, 255, 255, 0.35);
+            transform: scale(1.08);
         }
         
         /* Main content */
@@ -149,127 +129,182 @@
             grid-template-columns: 320px 1fr;
             flex-grow: 1;
             overflow: hidden;
+            background: #f0f6ff;
         }
         
         /* Left panel - actions */
         .left-panel {
-            background: var(--win-gray);
-            padding: 20px;
-            border-right: 3px solid var(--win-border);
+            background: white;
+            padding: 28px;
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 28px;
             overflow-y: auto;
+            border-right: 1px solid var(--border);
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.05);
         }
         
         .panel-section {
             background: white;
-            border: 2px solid var(--win-border);
             border-radius: 12px;
-            padding: 18px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 22px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
             position: relative;
-            overflow: hidden;
-        }
-        
-        .panel-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: var(--ios-blue);
+            border: 1px solid var(--border);
         }
         
         .panel-title {
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: var(--win-dark-blue);
-            font-size: 20px;
-            border-bottom: 2px solid var(--win-dark-gray);
-            padding-bottom: 8px;
+            font-weight: 700;
+            margin-bottom: 22px;
+            color: var(--primary);
+            font-size: 22px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
         
         .panel-title i {
-            font-size: 22px;
+            font-size: 24px;
+            color: var(--primary);
         }
         
-        /* iOS-style rounded buttons */
-        .ios-button {
-            background: linear-gradient(to bottom, var(--ios-blue), var(--ios-dark-blue));
-            color: white;
-            border: none;
-            border-radius: 28px;
-            padding: 14px 25px;
-            font-size: 18px;
-            cursor: pointer;
+        /* Form elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 16px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 16px;
             transition: all 0.3s;
+            background: var(--light);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(44, 111, 187, 0.2);
+        }
+        
+        /* Buttons */
+        .btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            margin: 12px 0;
+            gap: 12px;
+            padding: 16px 28px;
+            font-size: 17px;
             font-weight: 600;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
             width: 100%;
+            margin: 15px 0;
         }
         
-        .ios-button:hover {
-            background: linear-gradient(to bottom, #0062cc, #004999);
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 5px 18px rgba(44, 111, 187, 0.35);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 22px rgba(44, 111, 187, 0.45);
         }
         
-        .ios-button:active {
-            transform: translateY(1px);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        .btn-success {
+            background: linear-gradient(to right, var(--success), #218838);
+            color: white;
+            box-shadow: 0 5px 18px rgba(40, 167, 69, 0.35);
         }
         
-        .ios-button i {
+        .btn-success:hover {
+            background: linear-gradient(to right, #218838, var(--success));
+            transform: translateY(-3px);
+            box-shadow: 0 8px 22px rgba(40, 167, 69, 0.45);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(to right, var(--error), #bd2130);
+            color: white;
+            box-shadow: 0 5px 18px rgba(220, 53, 69, 0.35);
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(to right, #bd2130, var(--error));
+            transform: translateY(-3px);
+            box-shadow: 0 8px 22px rgba(220, 53, 69, 0.45);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(to right, var(--warning), #e0a800);
+            color: var(--dark);
+            box-shadow: 0 5px 18px rgba(255, 193, 7, 0.35);
+        }
+        
+        .btn-warning:hover {
+            background: linear-gradient(to right, #e0a800, var(--warning));
+            transform: translateY(-3px);
+            box-shadow: 0 8px 22px rgba(255, 193, 7, 0.45);
+        }
+        
+        .btn i {
             font-size: 20px;
         }
         
         /* Right panel - display */
         .right-panel {
-            padding: 20px;
-            background: #f5f5f5;
+            padding: 28px;
+            background: white;
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 28px;
             overflow-y: auto;
-            background: linear-gradient(to bottom, #f9f9f9, #eef5ff);
         }
         
         .tab-container {
             display: flex;
-            border-bottom: 2px solid var(--win-border);
-            margin-bottom: 20px;
-            background: white;
-            border-radius: 50px;
-            padding: 5px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            background: var(--light);
+            border-radius: 10px;
+            padding: 6px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
         }
         
         .tab {
-            padding: 12px 25px;
+            padding: 14px 24px;
             background: transparent;
             border: none;
-            border-radius: 50px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
             flex: 1;
             text-align: center;
+            color: var(--secondary);
+            font-size: 16px;
         }
         
         .tab.active {
-            background: var(--ios-blue);
-            color: white;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
         }
         
         .tab-content {
@@ -282,267 +317,185 @@
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
+        /* Product grid */
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 25px;
             margin-bottom: 25px;
         }
         
         .product-card {
             background: white;
-            border: 2px solid var(--win-border);
             border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 22px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
             transition: all 0.3s;
             display: flex;
             flex-direction: column;
+            border: 1px solid var(--border);
             position: relative;
             overflow: hidden;
         }
         
         .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-        
-        .product-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: var(--ios-blue);
+            transform: translateY(-6px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--primary-light);
         }
         
         .product-card h3 {
-            color: var(--win-dark-blue);
-            margin-bottom: 15px;
+            color: var(--primary);
+            margin-bottom: 18px;
             font-size: 20px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            font-weight: 600;
         }
         
         .product-card h3 i {
-            color: var(--ios-blue);
+            color: var(--primary);
         }
         
-        .code-display {
+        .product-card p {
+            margin: 8px 0;
+            color: var(--dark);
+            font-size: 16px;
+        }
+        
+        .barcode-container {
             display: flex;
-            justify-content: center;
-            margin: 15px 0;
-            min-height: 60px;
+            flex-direction: column;
+            align-items: center;
+            margin: 18px 0;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: white;
         }
         
-        .cell-display {
+        .barcode-number {
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--dark);
+            letter-spacing: 1px;
+        }
+        
+        .cell-info {
             display: flex;
             justify-content: space-between;
-            background: var(--win-gray);
-            padding: 12px;
-            border-radius: 8px;
+            background: var(--light);
+            padding: 14px;
+            border-radius: 10px;
+            margin-top: 18px;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            font-size: 17px;
+        }
+        
+        .product-actions {
+            display: flex;
+            gap: 10px;
             margin-top: 15px;
-            font-weight: bold;
-            border: 2px solid var(--win-border);
-            font-size: 18px;
-            background: linear-gradient(to right, #e0f0ff, #cce5ff);
         }
         
-        /* Scanner section */
-        .scanner-section {
-            background: white;
-            border: 2px solid var(--win-border);
-            border-radius: 12px;
-            padding: 25px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            position: relative;
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         
-        .scanner-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: var(--warning);
+        .action-btn.edit {
+            background: #e6f2ff;
+            color: var(--primary);
+        }
+        
+        .action-btn.delete {
+            background: #ffe6e6;
+            color: var(--error);
+        }
+        
+        .action-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
         }
         
         /* Print section */
         .print-section {
-            padding: 25px;
+            padding: 22px;
             background: white;
-            border: 2px solid var(--win-border);
             border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-        
-        .print-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: var(--success);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border);
         }
         
         .print-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
         }
         
         .print-item {
             background: white;
-            padding: 15px;
+            padding: 18px;
             border-radius: 10px;
             text-align: center;
-            border: 2px solid var(--win-border);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
             transition: all 0.3s;
             position: relative;
+            overflow: hidden;
         }
         
         .print-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
-        
-        .print-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: var(--ios-blue);
+            transform: translateY(-4px);
+            box-shadow: 0 7px 18px rgba(0,0,0,0.12);
         }
         
         .print-item h4 {
-            margin: 10px 0;
-            color: var(--win-dark-blue);
-            font-size: 16px;
+            margin: 12px 0;
+            color: var(--primary);
+            font-size: 18px;
+            font-weight: 600;
         }
         
-        /* Error animation */
-        .error-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            animation: errorPulse 0.5s ease-in-out;
-            display: none;
-        }
-        
-        @keyframes errorPulse {
-            0% { opacity: 0; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.1); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-        
-        .error-icon {
-            font-size: 120px;
-            color: var(--error);
-            margin-bottom: 30px;
-            text-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
-            animation: shake 0.8s ease-in-out infinite;
-        }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(0) rotate(0); }
-            25% { transform: translateX(-20px) rotate(-10deg); }
-            75% { transform: translateX(20px) rotate(10deg); }
-        }
-        
-        .error-message {
-            font-size: 42px;
-            color: white;
-            font-weight: bold;
-            text-align: center;
-            max-width: 80%;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.8);
-            margin-bottom: 30px;
-        }
-        
-        .error-submessage {
-            font-size: 24px;
-            color: #ccc;
-            text-align: center;
-            max-width: 70%;
-        }
-        
-        /* Success animation */
-        .success-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            animation: successPulse 0.5s ease-in-out;
-            display: none;
-        }
-        
-        @keyframes successPulse {
-            0% { opacity: 0; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.1); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-        
-        .success-icon {
-            font-size: 120px;
-            color: var(--success);
-            margin-bottom: 30px;
-            text-shadow: 0 0 20px rgba(76, 175, 80, 0.7);
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.8; }
-        }
-        
-        .success-message {
-            font-size: 42px;
-            color: white;
-            font-weight: bold;
-            text-align: center;
-            max-width: 80%;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.8);
-            margin-bottom: 30px;
+        .barcode-wrapper {
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin: 12px auto;
+            max-width: 100%;
+            overflow: hidden;
         }
         
         /* Footer */
         .footer {
-            background: var(--win-gray);
-            padding: 15px 25px;
+            background: white;
+            padding: 18px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-top: 3px solid var(--win-border);
-            font-size: 16px;
-            color: #555;
+            border-top: 1px solid var(--border);
+            font-size: 15px;
+            color: var(--secondary);
+            box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.05);
         }
         
         .status-bar {
@@ -553,35 +506,33 @@
         .status-item {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-size: 15px;
         }
         
         .status-item i {
-            font-size: 18px;
-            color: var(--win-dark-blue);
+            color: var(--primary);
         }
         
         /* Reset button */
         .reset-button {
-            background: linear-gradient(to right, var(--error), #d32f2f);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 8px 20px;
-            font-size: 14px;
+            background: transparent;
+            color: var(--error);
+            border: 1px solid var(--error);
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-size: 15px;
             cursor: pointer;
             transition: all 0.3s;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             font-weight: 600;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
         }
         
         .reset-button:hover {
-            background: linear-gradient(to right, #d32f2f, #b71c1c);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background: var(--error);
+            color: white;
         }
         
         /* Modal */
@@ -592,7 +543,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.75);
             z-index: 2000;
             justify-content: center;
             align-items: center;
@@ -600,123 +551,190 @@
         
         .modal-content {
             background: white;
-            padding: 30px;
+            padding: 35px;
             border-radius: 15px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.35);
             width: 90%;
-            max-width: 500px;
+            max-width: 550px;
             text-align: center;
             position: relative;
-            animation: modalIn 0.4s ease-out;
+            animation: modalIn 0.5s ease-out;
         }
         
         @keyframes modalIn {
-            from { opacity: 0; transform: translateY(-50px); }
+            from { opacity: 0; transform: translateY(-60px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
         .modal-title {
-            font-size: 24px;
-            color: var(--win-dark-blue);
-            margin-bottom: 20px;
+            font-size: 26px;
+            color: var(--primary);
+            margin-bottom: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
+            font-weight: 700;
         }
         
         .modal-input {
             width: 100%;
-            padding: 15px;
-            margin: 15px 0;
-            border: 2px solid var(--win-border);
-            border-radius: 50px;
-            font-size: 18px;
+            padding: 16px;
+            margin: 20px 0;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 17px;
             text-align: center;
             outline: none;
             transition: all 0.3s;
+            background: var(--light);
         }
         
         .modal-input:focus {
-            border-color: var(--ios-blue);
-            box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.2);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(44, 111, 187, 0.25);
         }
         
         .modal-buttons {
             display: flex;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 18px;
+            margin-top: 25px;
         }
         
         .modal-button {
             flex: 1;
-            padding: 12px;
-            border-radius: 50px;
+            padding: 14px;
+            border-radius: 10px;
             border: none;
-            font-size: 16px;
+            font-size: 17px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
         }
         
         .modal-button.confirm {
-            background: linear-gradient(to right, var(--success), #388e3c);
+            background: var(--success);
             color: white;
+        }
+        
+        .modal-button.confirm:hover {
+            background: #218838;
+            transform: translateY(-2px);
         }
         
         .modal-button.cancel {
-            background: linear-gradient(to right, var(--win-gray), #d0d0d0);
-            color: #555;
+            background: var(--light);
+            color: var(--dark);
+            border: 1px solid var(--border);
         }
         
-        /* Reset animation */
-        .reset-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            display: none;
-        }
-        
-        .reset-icon {
-            font-size: 100px;
-            color: var(--ios-blue);
-            margin-bottom: 30px;
-            animation: spin 1.5s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .reset-message {
-            font-size: 36px;
-            color: white;
-            font-weight: bold;
-            text-align: center;
-            max-width: 80%;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-            margin-bottom: 20px;
+        .modal-button.cancel:hover {
+            background: #e2e6ea;
+            transform: translateY(-2px);
         }
         
         /* Responsive */
-        @media (max-width: 1100px) {
+        @media (max-width: 1200px) {
             .content {
                 grid-template-columns: 1fr;
             }
             
             .left-panel {
                 border-right: none;
-                border-bottom: 3px solid var(--win-border);
+                border-bottom: 1px solid var(--border);
             }
+        }
+        
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .print-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .logo {
+                justify-content: center;
+            }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 50px 25px;
+            color: var(--secondary);
+            grid-column: 1 / -1;
+        }
+        
+        .empty-state i {
+            font-size: 70px;
+            color: #d1d9e0;
+            margin-bottom: 25px;
+            opacity: 0.7;
+        }
+        
+        .empty-state h3 {
+            font-size: 26px;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .empty-state p {
+            font-size: 17px;
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        /* Cell status */
+        .cell-status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #e6ffed;
+            color: var(--success);
+        }
+        
+        .status-issued {
+            background: #ffe6e6;
+            color: var(--error);
+        }
+        
+        /* Animation */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
     </style>
 </head>
@@ -725,22 +743,19 @@
         <div class="header">
             <div class="logo">
                 <div class="logo-icon">
-                    <i class="fas fa-boxes"></i>
+                    <i class="fas fa-warehouse"></i>
                 </div>
                 <div class="header-text">
-                    <h1>ProWarehouse Pro</h1>
-                    <div class="header-subtitle">Профессиональная система управления товарами</div>
+                    <h1>StockMaster Pro</h1>
+                    <div class="header-subtitle">Профессиональная система управления складом</div>
                 </div>
             </div>
             <div class="control-buttons">
-                <div class="control-button minimize">
-                    <i class="fas fa-minus"></i>
+                <div class="control-button">
+                    <i class="fas fa-sync-alt"></i>
                 </div>
-                <div class="control-button maximize">
-                    <i class="fas fa-square"></i>
-                </div>
-                <div class="control-button close">
-                    <i class="fas fa-times"></i>
+                <div class="control-button">
+                    <i class="fas fa-cog"></i>
                 </div>
             </div>
         </div>
@@ -753,9 +768,9 @@
                         Управление товарами
                     </div>
                     
-                    <div class="cell-selector">
-                        <i class="fas fa-cube"></i>
-                        <select id="cellSelector">
+                    <div class="form-group">
+                        <label for="cellSelector"><i class="fas fa-cube"></i> Выберите ячейку</label>
+                        <select id="cellSelector" class="form-control">
                             <option value="P1">Ячейка P1</option>
                             <option value="P2">Ячейка P2</option>
                             <option value="P3">Ячейка P3</option>
@@ -764,17 +779,17 @@
                         </select>
                     </div>
                     
-                    <button class="ios-button" id="addProductBtn">
+                    <button class="btn btn-primary" id="addProductBtn">
                         <i class="fas fa-plus-circle"></i>
                         Добавить товар
                     </button>
-                    <button class="ios-button" id="generateBarcodeBtn">
+                    <button class="btn btn-success" id="generateBarcodeBtn">
                         <i class="fas fa-barcode"></i>
-                        Сгенерировать штрих-код для ячейки
+                        Создать штрих-код для ячейки
                     </button>
-                    <button class="ios-button" id="issueItemsBtn">
-                        <i class="fas fa-truck-loading"></i>
-                        Выдать вещи
+                    <button class="btn btn-warning" id="viewProductsBtn">
+                        <i class="fas fa-search"></i>
+                        Просмотреть товары в ячейке
                     </button>
                 </div>
                 
@@ -783,28 +798,38 @@
                         <i class="fas fa-chart-bar"></i>
                         Статус системы
                     </div>
-                    <p><strong><i class="fas fa-box"></i> Товаров:</strong> <span id="itemsCount">0</span></p>
-                    <p><strong><i class="fas fa-cubes"></i> Ячеек:</strong> <span id="cellsCount">0</span></p>
-                    <p><strong><i class="fas fa-history"></i> Последнее действие:</strong> <span id="lastAction">Нет</span></p>
+                    <div class="status-item">
+                        <i class="fas fa-box"></i>
+                        <span>Товаров: <strong id="itemsCount">0</strong></span>
+                    </div>
+                    <div class="status-item">
+                        <i class="fas fa-cubes"></i>
+                        <span>Ячеек: <strong id="cellsCount">0</strong></span>
+                    </div>
+                    <div class="status-item">
+                        <i class="fas fa-barcode"></i>
+                        <span>Штрих-кодов: <strong id="barcodesCount">0</strong></span>
+                    </div>
+                    <div class="status-item">
+                        <i class="fas fa-history"></i>
+                        <span>Последнее действие: <strong id="lastAction">Нет</strong></span>
+                    </div>
                 </div>
                 
                 <div class="panel-section">
                     <div class="panel-title">
+                        <i class="fas fa-truck-loading"></i>
+                        Выдача товаров
+                    </div>
+                    <p style="margin-bottom: 18px; color: var(--secondary);">Для выдачи товаров отсканируйте штрих-код ячейки:</p>
+                    <button class="btn btn-primary" id="issueItemsBtn">
                         <i class="fas fa-camera"></i>
-                        Сканер
-                    </div>
-                    <p>Отсканируйте штрих-код с помощью камеры:</p>
-                    
-                    <div class="scanner-controls" style="margin-top: 20px;">
-                        <button class="ios-button" id="simulateScanBtn">
-                            <i class="fas fa-camera"></i>
-                            Симулировать сканирование
-                        </button>
-                    </div>
-                    
-                    <div id="scanResult" style="margin-top: 20px; min-height: 80px; background: #f0f8ff; padding: 15px; border-radius: 10px; border: 2px dashed var(--ios-blue);">
-                        <p style="text-align: center; color: #666;">Здесь будет результат сканирования...</p>
-                    </div>
+                        Сканировать штрих-код
+                    </button>
+                    <button class="btn btn-danger" id="resetCellBtn">
+                        <i class="fas fa-trash-alt"></i>
+                        Очистить ячейку
+                    </button>
                 </div>
             </div>
             
@@ -812,13 +837,17 @@
                 <div class="tab-container">
                     <div class="tab active" data-tab="products">Товары в системе</div>
                     <div class="tab" data-tab="codes">Штрих-коды для печати</div>
-                    <div class="tab" data-tab="cells">Управление ячейками</div>
+                    <div class="tab" data-tab="cells">Статус ячеек</div>
                 </div>
                 
                 <div id="productsTab" class="tab-content active">
                     <div class="panel-section">
                         <div class="product-grid" id="productGrid">
-                            <!-- Product cards will be generated here -->
+                            <div class="empty-state">
+                                <i class="fas fa-box-open"></i>
+                                <h3>Нет товаров</h3>
+                                <p>Добавьте товары, нажав кнопку "Добавить товар"</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -826,41 +855,51 @@
                 <div id="codesTab" class="tab-content">
                     <div class="print-section">
                         <div class="print-grid" id="printGrid">
-                            <!-- Generated barcodes will appear here -->
+                            <div class="empty-state">
+                                <i class="fas fa-barcode"></i>
+                                <h3>Нет штрих-кодов</h3>
+                                <p>Создайте штрих-коды для ячеек, нажав кнопку "Создать штрих-код"</p>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
                 <div id="cellsTab" class="tab-content">
                     <div class="panel-section">
-                        <h2 style="color: var(--win-dark-blue); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                        <h2 style="color: var(--primary); margin-bottom: 25px; display: flex; align-items: center; gap: 12px;">
                             <i class="fas fa-warehouse"></i>
-                            Управление ячейками хранения
+                            Статус ячеек хранения
                         </h2>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
-                            <div class="cell-card" style="background: #e6f7ff; padding: 20px; border-radius: 10px; border: 2px solid var(--win-border); position: relative;">
-                                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--ios-blue);"></div>
-                                <h3 style="display: flex; align-items: center; gap: 10px; color: var(--win-dark-blue);">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px;">
+                            <div class="cell-card" style="background: #e8f4ff; padding: 25px; border-radius: 12px; border: 1px solid var(--border);">
+                                <h3 style="display: flex; align-items: center; gap: 12px; color: var(--primary);">
                                     <i class="fas fa-cube"></i> Ячейка P1
                                 </h3>
-                                <p style="margin: 10px 0;"><strong>Товаров:</strong> 2</p>
-                                <p><strong>Статус:</strong> <span style="color: var(--success);">Свободна</span></p>
+                                <p style="margin: 12px 0;"><strong>Товаров:</strong> <span id="cellP1Count">0</span></p>
+                                <p><strong>Статус:</strong> <span id="cellP1Status" class="cell-status status-active">Пустая</span></p>
+                                <button class="action-btn edit" onclick="viewCellProducts('P1')" style="margin-top: 15px;">
+                                    <i class="fas fa-eye"></i> Просмотреть
+                                </button>
                             </div>
-                            <div class="cell-card" style="background: #fff8e6; padding: 20px; border-radius: 10px; border: 2px solid var(--win-border); position: relative;">
-                                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--warning);"></div>
-                                <h3 style="display: flex; align-items: center; gap: 10px; color: var(--win-dark-blue);">
+                            <div class="cell-card" style="background: #e8f4ff; padding: 25px; border-radius: 12px; border: 1px solid var(--border);">
+                                <h3 style="display: flex; align-items: center; gap: 12px; color: var(--primary);">
                                     <i class="fas fa-cube"></i> Ячейка P2
                                 </h3>
-                                <p style="margin: 10px 0;"><strong>Товаров:</strong> 3</p>
-                                <p><strong>Статус:</strong> <span style="color: var(--success);">Свободна</span></p>
+                                <p style="margin: 12px 0;"><strong>Товаров:</strong> <span id="cellP2Count">0</span></p>
+                                <p><strong>Статус:</strong> <span id="cellP2Status" class="cell-status status-active">Пустая</span></p>
+                                <button class="action-btn edit" onclick="viewCellProducts('P2')" style="margin-top: 15px;">
+                                    <i class="fas fa-eye"></i> Просмотреть
+                                </button>
                             </div>
-                            <div class="cell-card" style="background: #ffebee; padding: 20px; border-radius: 10px; border: 2px solid var(--win-border); position: relative;">
-                                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--error);"></div>
-                                <h3 style="display: flex; align-items: center; gap: 10px; color: var(--win-dark-blue);">
+                            <div class="cell-card" style="background: #e8f4ff; padding: 25px; border-radius: 12px; border: 1px solid var(--border);">
+                                <h3 style="display: flex; align-items: center; gap: 12px; color: var(--primary);">
                                     <i class="fas fa-cube"></i> Ячейка P3
                                 </h3>
-                                <p style="margin: 10px 0;"><strong>Товаров:</strong> 5</p>
-                                <p><strong>Статус:</strong> <span style="color: var(--error);">Заполнена</span></p>
+                                <p style="margin: 12px 0;"><strong>Товаров:</strong> <span id="cellP3Count">0</span></p>
+                                <p><strong>Статус:</strong> <span id="cellP3Status" class="cell-status status-active">Пустая</span></p>
+                                <button class="action-btn edit" onclick="viewCellProducts('P3')" style="margin-top: 15px;">
+                                    <i class="fas fa-eye"></i> Просмотреть
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -878,10 +917,6 @@
                     <i class="fas fa-microchip"></i>
                     <span>Загрузка ЦП: <span id="cpuStatus">12%</span></span>
                 </div>
-                <div class="status-item">
-                    <i class="fas fa-memory"></i>
-                    <span>Память: <span id="memoryStatus">45%</span></span>
-                </div>
             </div>
             <div>
                 <button class="reset-button" id="resetBtn">
@@ -892,26 +927,7 @@
         </div>
     </div>
     
-    <!-- Error Animation -->
-    <div class="error-animation" id="errorAnimation">
-        <div class="error-icon"><i class="fas fa-exclamation-triangle"></i></div>
-        <div class="error-message" id="errorMessage">ОШИБКА! Код не найден в системе</div>
-        <div class="error-submessage">Проверьте правильность сканирования и повторите попытку</div>
-    </div>
-    
-    <!-- Success Animation -->
-    <div class="success-animation" id="successAnimation">
-        <div class="success-icon"><i class="fas fa-check-circle"></i></div>
-        <div class="success-message" id="successMessage">УСПЕШНО! Операция завершена</div>
-    </div>
-    
-    <!-- Reset Animation -->
-    <div class="reset-animation" id="resetAnimation">
-        <div class="reset-icon"><i class="fas fa-redo"></i></div>
-        <div class="reset-message" id="resetMessage">Сброс системы...</div>
-    </div>
-    
-    <!-- Product Name Modal -->
+    <!-- Modals -->
     <div class="modal" id="productNameModal">
         <div class="modal-content">
             <div class="modal-title">
@@ -926,14 +942,13 @@
         </div>
     </div>
     
-    <!-- Password Modal -->
     <div class="modal" id="passwordModal">
         <div class="modal-content">
             <div class="modal-title">
                 <i class="fas fa-lock"></i>
                 Подтверждение сброса
             </div>
-            <p style="margin-bottom: 20px; color: #555;">Введите пароль для сброса системы:</p>
+            <p style="margin-bottom: 20px; color: var(--dark);">Введите пароль для сброса системы:</p>
             <input type="password" class="modal-input" id="passwordInput" placeholder="Введите пароль 7533">
             <div class="modal-buttons">
                 <button class="modal-button cancel" id="cancelResetBtn">Отмена</button>
@@ -941,35 +956,62 @@
             </div>
         </div>
     </div>
+    
+    <div class="modal" id="scanModal">
+        <div class="modal-content">
+            <div class="modal-title">
+                <i class="fas fa-camera"></i>
+                Сканирование штрих-кода
+            </div>
+            <p style="margin-bottom: 20px; color: var(--dark);">Введите штрих-код ячейки для выдачи товаров:</p>
+            <input type="text" class="modal-input" id="scanInput" placeholder="Отсканируйте штрих-код">
+            <div class="modal-buttons">
+                <button class="modal-button cancel" id="cancelScanBtn">Отмена</button>
+                <button class="modal-button confirm" id="confirmScanBtn">Подтвердить</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="viewProductsModal">
+        <div class="modal-content">
+            <div class="modal-title">
+                <i class="fas fa-boxes"></i>
+                Товары в ячейке <span id="cellName"></span>
+            </div>
+            <div id="cellProductsList" style="max-height: 400px; overflow-y: auto; text-align: left; margin: 20px 0; padding: 15px; background: var(--light); border-radius: 10px; border: 1px solid var(--border);"></div>
+            <div class="modal-buttons">
+                <button class="modal-button cancel" id="closeViewModalBtn">Закрыть</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         // Data storage
-        let products = JSON.parse(localStorage.getItem('products')) || [];
-        let cells = JSON.parse(localStorage.getItem('cells')) || {};
+        let products = [];
+        let barcodes = [];
         let currentCell = 'P1';
         
         // DOM Elements
         const productGrid = document.getElementById('productGrid');
         const printGrid = document.getElementById('printGrid');
-        const scanResult = document.getElementById('scanResult');
-        const errorAnimation = document.getElementById('errorAnimation');
-        const errorMessage = document.getElementById('errorMessage');
-        const successAnimation = document.getElementById('successAnimation');
-        const successMessage = document.getElementById('successMessage');
-        const resetAnimation = document.getElementById('resetAnimation');
-        const resetMessage = document.getElementById('resetMessage');
         const itemsCount = document.getElementById('itemsCount');
         const cellsCount = document.getElementById('cellsCount');
+        const barcodesCount = document.getElementById('barcodesCount');
         const lastAction = document.getElementById('lastAction');
         const cellSelector = document.getElementById('cellSelector');
         const productNameModal = document.getElementById('productNameModal');
         const passwordModal = document.getElementById('passwordModal');
+        const scanModal = document.getElementById('scanModal');
+        const viewProductsModal = document.getElementById('viewProductsModal');
         const productNameInput = document.getElementById('productNameInput');
+        const scanInput = document.getElementById('scanInput');
+        const cellProductsList = document.getElementById('cellProductsList');
+        const cellNameSpan = document.getElementById('cellName');
         
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize with sample data
-            initializeSampleData();
+            // Load data from localStorage
+            loadData();
             
             // Set up tabs
             document.querySelectorAll('.tab').forEach(tab => {
@@ -985,54 +1027,64 @@
             // Event listeners
             document.getElementById('addProductBtn').addEventListener('click', showProductNameModal);
             document.getElementById('generateBarcodeBtn').addEventListener('click', generateBarcodeForCell);
-            document.getElementById('issueItemsBtn').addEventListener('click', issueItems);
-            document.getElementById('simulateScanBtn').addEventListener('click', simulateScan);
+            document.getElementById('viewProductsBtn').addEventListener('click', viewCurrentCellProducts);
+            document.getElementById('issueItemsBtn').addEventListener('click', showScanModal);
+            document.getElementById('resetCellBtn').addEventListener('click', resetCurrentCell);
             document.getElementById('resetBtn').addEventListener('click', showPasswordModal);
             document.getElementById('cancelProductBtn').addEventListener('click', closeProductNameModal);
             document.getElementById('confirmProductBtn').addEventListener('click', addProductWithName);
             document.getElementById('cancelResetBtn').addEventListener('click', closePasswordModal);
             document.getElementById('confirmResetBtn').addEventListener('click', resetSystem);
-            
-            // Control buttons
-            document.querySelector('.control-button.minimize').addEventListener('click', () => {
-                document.querySelector('.container').style.transform = 'scale(0.9)';
-                document.querySelector('.container').style.opacity = '0.8';
-                setTimeout(() => {
-                    document.querySelector('.container').style.transform = 'scale(1)';
-                    document.querySelector('.container').style.opacity = '1';
-                }, 300);
-            });
-            
-            document.querySelector('.control-button.maximize').addEventListener('click', () => {
-                document.querySelector('.container').classList.toggle('maximized');
-            });
-            
-            document.querySelector('.control-button.close').addEventListener('click', () => {
-                document.querySelector('.container').style.transform = 'translateY(100px)';
-                document.querySelector('.container').style.opacity = '0';
-                setTimeout(() => {
-                    alert('Приложение закрыто. Обновите страницу, чтобы продолжить работу.');
-                }, 500);
+            document.getElementById('cancelScanBtn').addEventListener('click', closeScanModal);
+            document.getElementById('confirmScanBtn').addEventListener('click', processScan);
+            document.getElementById('closeViewModalBtn').addEventListener('click', () => {
+                viewProductsModal.style.display = 'none';
             });
             
             // Cell selector
             cellSelector.addEventListener('change', (e) => {
                 currentCell = e.target.value;
-                lastAction.textContent = `Выбрана ячейка: ${currentCell}`;
+                updateLastAction(`Выбрана ячейка: ${currentCell}`);
             });
             
             // Simulate system stats
             setInterval(() => {
                 document.getElementById('cpuStatus').textContent = 
                     Math.floor(Math.random() * 20) + 5 + '%';
-                document.getElementById('memoryStatus').textContent = 
-                    Math.floor(Math.random() * 20) + 35 + '%';
             }, 3000);
+            
+            // Update cell status
+            updateCellStatus();
         });
+        
+        // Load data from localStorage
+        function loadData() {
+            const storedProducts = localStorage.getItem('products');
+            const storedBarcodes = localStorage.getItem('barcodes');
+            
+            if (storedProducts) {
+                products = JSON.parse(storedProducts);
+            }
+            
+            if (storedBarcodes) {
+                barcodes = JSON.parse(storedBarcodes);
+            }
+            
+            updateProductDisplay();
+            updateBarcodeDisplay();
+            updateSystemStats();
+        }
+        
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('products', JSON.stringify(products));
+            localStorage.setItem('barcodes', JSON.stringify(barcodes));
+        }
         
         // Show product name modal
         function showProductNameModal() {
             productNameInput.value = '';
+            productNameInput.focus();
             productNameModal.style.display = 'flex';
         }
         
@@ -1057,103 +1109,105 @@
         // Add product
         function addProduct(name) {
             const productId = 'PRD-' + Date.now().toString().slice(-6);
-            const barcode = 'BC' + Math.floor(100000 + Math.random() * 900000);
+            const barcode = 'BC-' + Math.floor(100000 + Math.random() * 900000);
             
             // Create product
             const product = {
                 id: productId,
                 name: name,
                 barcode: barcode,
-                cell: currentCell
+                cell: currentCell,
+                status: 'active',
+                date: new Date().toISOString()
             };
             
             products.push(product);
-            saveToLocalStorage();
+            saveData();
             updateProductDisplay();
             updateSystemStats();
+            updateCellStatus();
             
-            // Generate barcode for printing
-            generateBarcodeForPrinting(barcode, name);
+            updateLastAction(`Товар "${name}" добавлен в ячейку ${currentCell}`);
             
-            // Show success
-            showSuccess(`Товар "${name}" добавлен в ячейку ${currentCell}`);
-            
-            lastAction.textContent = `Добавлен товар: ${name} в ${currentCell}`;
-        }
-        
-        // Generate barcode for printing
-        function generateBarcodeForPrinting(barcode, name) {
-            const printItem = document.createElement('div');
-            printItem.className = 'print-item';
-            
-            const canvas = document.createElement('canvas');
-            printItem.appendChild(canvas);
-            
-            const label = document.createElement('h4');
-            label.textContent = name;
-            printItem.appendChild(label);
-            
-            const barcodeLabel = document.createElement('p');
-            barcodeLabel.textContent = barcode;
-            barcodeLabel.style.fontFamily = 'monospace';
-            barcodeLabel.style.fontSize = '14px';
-            printItem.appendChild(barcodeLabel);
-            
-            printGrid.appendChild(printItem);
-            
-            // Generate barcode
-            JsBarcode(canvas, barcode, {
-                format: "CODE128",
-                displayValue: false,
-                fontSize: 12,
-                height: 50,
-                margin: 10
-            });
+            // Auto switch to products tab
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector('.tab[data-tab="products"]').classList.add('active');
+            document.getElementById('productsTab').classList.add('active');
         }
         
         // Generate barcode for cell
         function generateBarcodeForCell() {
-            if (products.length === 0) {
-                showError('Нет товаров для генерации штрих-кода');
-                return;
-            }
-            
             // Find products in current cell
-            const cellProducts = products.filter(p => p.cell === currentCell);
+            const cellProducts = products.filter(p => p.cell === currentCell && p.status === 'active');
+            
             if (cellProducts.length === 0) {
-                showError('В текущей ячейке нет товаров');
+                alert(`В ячейке ${currentCell} нет активных товаров`);
                 return;
             }
             
             // Create barcode content
-            const barcodeContent = `CELL-${currentCell}-${cellProducts.length}`;
+            const barcodeContent = `CELL-${currentCell}-${Date.now().toString().slice(-6)}`;
+            
+            // Create barcode object
+            const barcode = {
+                id: 'BC-' + Date.now().toString(),
+                cell: currentCell,
+                content: barcodeContent,
+                products: cellProducts.map(p => p.id),
+                date: new Date().toISOString()
+            };
+            
+            barcodes.push(barcode);
+            saveData();
+            updateBarcodeDisplay();
             
             // Create barcode element
+            createBarcodeElement(barcode);
+            
+            updateLastAction(`Создан штрих-код для ячейки: ${currentCell}`);
+        }
+        
+        // Create barcode element
+        function createBarcodeElement(barcode) {
             const printItem = document.createElement('div');
             printItem.className = 'print-item';
-            
-            const canvas = document.createElement('canvas');
-            canvas.id = `barcode-${currentCell}`;
-            printItem.appendChild(canvas);
+            printItem.id = `barcode-${barcode.id}`;
             
             const label = document.createElement('h4');
-            label.textContent = `Ячейка ${currentCell}`;
+            label.textContent = `Ячейка ${barcode.cell}`;
             printItem.appendChild(label);
             
+            const dateLabel = document.createElement('p');
+            dateLabel.textContent = new Date(barcode.date).toLocaleDateString();
+            dateLabel.style.color = '#6c757d';
+            dateLabel.style.fontSize = '15px';
+            printItem.appendChild(dateLabel);
+            
             const countLabel = document.createElement('p');
-            countLabel.textContent = `Товаров: ${cellProducts.length}`;
-            countLabel.style.color = '#666';
+            countLabel.textContent = `Товаров: ${barcode.products.length}`;
+            countLabel.style.fontWeight = '600';
+            countLabel.style.marginBottom = '15px';
             printItem.appendChild(countLabel);
+            
+            const barcodeWrapper = document.createElement('div');
+            barcodeWrapper.className = 'barcode-wrapper';
+            printItem.appendChild(barcodeWrapper);
+            
+            const canvas = document.createElement('canvas');
+            barcodeWrapper.appendChild(canvas);
             
             printGrid.appendChild(printItem);
             
             // Generate barcode
-            JsBarcode(`#barcode-${currentCell}`, barcodeContent, {
+            JsBarcode(canvas, barcode.content, {
                 format: "CODE128",
                 displayValue: true,
                 fontSize: 14,
                 height: 50,
-                margin: 10
+                margin: 10,
+                text: barcode.content,
+                textMargin: 5
             });
             
             // Switch to codes tab
@@ -1161,58 +1215,118 @@
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.querySelector('.tab[data-tab="codes"]').classList.add('active');
             document.getElementById('codesTab').classList.add('active');
+        }
+        
+        // Show scan modal
+        function showScanModal() {
+            scanInput.value = '';
+            scanInput.focus();
+            scanModal.style.display = 'flex';
+        }
+        
+        // Close scan modal
+        function closeScanModal() {
+            scanModal.style.display = 'none';
+        }
+        
+        // Process scan
+        function processScan() {
+            const scanValue = scanInput.value.trim();
             
-            lastAction.textContent = `Сгенерирован штрих-код для ячейки: ${currentCell}`;
-            showSuccess(`Сгенерирован штрих-код для ячейки ${currentCell}`);
-        }
-        
-        // Simulate scan
-        function simulateScan() {
-            if (products.length > 0) {
-                const randomProduct = products[Math.floor(Math.random() * products.length)];
-                
-                scanResult.innerHTML = `
-                    <div style="background: #e8f5e9; padding: 20px; border-radius: 12px; border: 2px solid var(--success);">
-                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                            <i class="fas fa-check-circle" style="font-size: 36px; color: var(--success);"></i>
-                            <h3 style="color: var(--success);">Товар распознан!</h3>
-                        </div>
-                        <p><strong>Название:</strong> ${randomProduct.name}</p>
-                        <p><strong>Штрих-код:</strong> ${randomProduct.barcode}</p>
-                        <p><strong>Ячейка:</strong> ${randomProduct.cell}</p>
-                    </div>
-                `;
-                
-                lastAction.textContent = `Отсканирован товар: ${randomProduct.name}`;
-            } else {
-                showError('Нет товаров для сканирования');
-            }
-        }
-        
-        // Issue items
-        function issueItems() {
-            if (products.length === 0) {
-                showError('Нет товаров для выдачи');
+            if (!scanValue) {
+                alert('Пожалуйста, введите или отсканируйте штрих-код');
                 return;
             }
             
-            // Show confirmation
-            if (confirm(`Вы уверены, что хотите выдать все товары (${products.length} шт.)?`)) {
-                // Remove all products
-                products = [];
-                saveToLocalStorage();
+            // Find barcode
+            const barcode = barcodes.find(b => b.content === scanValue);
+            
+            if (!barcode) {
+                alert('Штрих-код не найден в системе');
+                return;
+            }
+            
+            // Find products for this barcode
+            const productsToIssue = products.filter(p => 
+                barcode.products.includes(p.id) && p.status === 'active');
+                
+            if (productsToIssue.length === 0) {
+                alert('Нет активных товаров для выдачи в этой ячейке');
+                closeScanModal();
+                return;
+            }
+            
+            // Issue products
+            productsToIssue.forEach(product => {
+                product.status = 'issued';
+            });
+            
+            saveData();
+            updateProductDisplay();
+            updateSystemStats();
+            updateCellStatus();
+            
+            closeScanModal();
+            
+            alert(`Товары в ячейке ${barcode.cell} успешно выданы!`);
+            updateLastAction(`Товары в ячейке ${barcode.cell} выданы`);
+        }
+        
+        // View products in current cell
+        function viewCurrentCellProducts() {
+            viewCellProducts(currentCell);
+        }
+        
+        // View products in specific cell
+        function viewCellProducts(cell) {
+            const cellProducts = products.filter(p => p.cell === cell);
+            
+            if (cellProducts.length === 0) {
+                alert(`В ячейке ${cell} нет товаров`);
+                return;
+            }
+            
+            cellNameSpan.textContent = cell;
+            cellProductsList.innerHTML = '';
+            
+            cellProducts.forEach(product => {
+                const productItem = document.createElement('div');
+                productItem.className = 'cell-product-item';
+                productItem.style.padding = '12px';
+                productItem.style.borderBottom = '1px solid var(--border)';
+                productItem.style.display = 'flex';
+                productItem.style.justifyContent = 'space-between';
+                productItem.style.alignItems = 'center';
+                
+                productItem.innerHTML = `
+                    <div>
+                        <strong>${product.name}</strong>
+                        <div>ID: ${product.id}</div>
+                        <div>Штрих-код: ${product.barcode}</div>
+                    </div>
+                    <span class="cell-status ${product.status === 'active' ? 'status-active' : 'status-issued'}">
+                        ${product.status === 'active' ? 'Активен' : 'Выдан'}
+                    </span>
+                `;
+                
+                cellProductsList.appendChild(productItem);
+            });
+            
+            viewProductsModal.style.display = 'flex';
+        }
+        
+        // Reset current cell
+        function resetCurrentCell() {
+            if (confirm(`Вы уверены, что хотите очистить ячейку ${currentCell}? Все товары будут удалены.`)) {
+                // Remove products from current cell
+                products = products.filter(p => p.cell !== currentCell);
+                saveData();
                 updateProductDisplay();
                 updateSystemStats();
+                updateCellStatus();
                 
-                // Show success animation
-                successMessage.textContent = 'Все товары успешно выданы!';
-                successAnimation.style.display = 'flex';
-                
-                setTimeout(() => {
-                    successAnimation.style.display = 'none';
-                }, 3000);
-                
-                lastAction.textContent = 'Все товары выданы и удалены из системы';
+                alert(`Ячейка ${currentCell} успешно очищена!`);
+                updateLastAction(`Ячейка ${currentCell} очищена`);
             }
         }
         
@@ -1232,62 +1346,70 @@
             const password = document.getElementById('passwordInput').value;
             
             if (password !== '7533') {
-                showError('Неверный пароль! Попробуйте еще раз.');
+                alert('Неверный пароль! Попробуйте еще раз.');
                 return;
             }
             
             closePasswordModal();
             
-            // Show reset animation
-            resetAnimation.style.display = 'flex';
+            // Clear localStorage
+            localStorage.removeItem('products');
+            localStorage.removeItem('barcodes');
             
-            setTimeout(() => {
-                // Clear localStorage
-                localStorage.removeItem('products');
-                localStorage.removeItem('cells');
-                
-                // Reset products array
-                products = [];
-                
-                // Hide reset animation
-                resetAnimation.style.display = 'none';
-                
-                // Reload the page to reset UI
-                location.reload();
-            }, 2000);
+            // Reset arrays
+            products = [];
+            barcodes = [];
+            
+            // Update UI
+            updateProductDisplay();
+            updateBarcodeDisplay();
+            updateSystemStats();
+            updateCellStatus();
+            
+            alert('Система успешно сброшена!');
+            updateLastAction('Система сброшена');
         }
         
         // Update product display
         function updateProductDisplay() {
             productGrid.innerHTML = '';
             
-            if (products.length === 0) {
+            const activeProducts = products.filter(p => p.status === 'active');
+            
+            if (activeProducts.length === 0) {
                 productGrid.innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                        <i class="fas fa-box-open" style="font-size: 60px; color: #ccc; margin-bottom: 20px;"></i>
-                        <h3 style="color: #666;">Товары не найдены</h3>
+                    <div class="empty-state">
+                        <i class="fas fa-box-open"></i>
+                        <h3>Нет активных товаров</h3>
                         <p>Добавьте товары, нажав кнопку "Добавить товар"</p>
                     </div>
                 `;
                 return;
             }
             
-            products.forEach((product, index) => {
+            activeProducts.forEach((product, index) => {
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 productCard.innerHTML = `
                     <h3><i class="fas fa-tag"></i> ${product.name}</h3>
                     <p><strong>ID:</strong> ${product.id}</p>
                     <p><strong>Штрих-код:</strong> ${product.barcode}</p>
-                    <div class="cell-display">
+                    <div class="cell-info">
                         <span><i class="fas fa-cube"></i> Ячейка:</span>
                         <span>${product.cell}</span>
                     </div>
-                    <div class="code-display" id="barcode-${index}"></div>
-                    <button class="ios-button" onclick="removeProduct(${index})">
-                        <i class="fas fa-trash-alt"></i>
-                        Удалить
-                    </button>
+                    <div class="barcode-container">
+                        <div class="barcode-number">${product.barcode}</div>
+                        <div id="barcode-${index}"></div>
+                    </div>
+                    <div class="product-actions">
+                        <button class="action-btn edit" onclick="editProduct('${product.id}')">
+                            <i class="fas fa-edit"></i> Изменить
+                        </button>
+                        <button class="action-btn delete" onclick="deleteProduct('${product.id}')">
+                            <i class="fas fa-trash-alt"></i> Удалить
+                        </button>
+                    </div>
                 `;
                 productGrid.appendChild(productCard);
                 
@@ -1295,86 +1417,98 @@
                 setTimeout(() => {
                     JsBarcode(`#barcode-${index}`, product.barcode, {
                         format: "CODE128",
-                        displayValue: true,
+                        displayValue: false,
                         fontSize: 14,
                         height: 50,
-                        background: "transparent"
+                        background: "transparent",
+                        margin: 5
                     });
                 }, 100);
             });
         }
         
-        // Remove product
-        function removeProduct(index) {
-            const productName = products[index].name;
-            products.splice(index, 1);
-            saveToLocalStorage();
-            updateProductDisplay();
-            updateSystemStats();
+        // Edit product
+        function editProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
             
-            showSuccess(`Товар "${productName}" удалён`);
-            
-            lastAction.textContent = `Товар удалён: ${productName}`;
+            const newName = prompt('Введите новое название товара:', product.name);
+            if (newName && newName.trim() !== '') {
+                product.name = newName.trim();
+                saveData();
+                updateProductDisplay();
+                updateLastAction(`Товар "${product.name}" изменен`);
+            }
         }
         
-        // Show error animation
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorAnimation.style.display = 'flex';
+        // Delete product
+        function deleteProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
             
-            setTimeout(() => {
-                errorAnimation.style.display = 'none';
-            }, 4000);
-            
-            lastAction.textContent = `Ошибка: ${message}`;
+            if (confirm(`Вы уверены, что хотите удалить товар "${product.name}"?`)) {
+                products = products.filter(p => p.id !== productId);
+                saveData();
+                updateProductDisplay();
+                updateSystemStats();
+                updateCellStatus();
+                updateLastAction(`Товар "${product.name}" удален`);
+            }
         }
         
-        // Show success animation
-        function showSuccess(message) {
-            successMessage.textContent = message;
-            successAnimation.style.display = 'flex';
+        // Update barcode display
+        function updateBarcodeDisplay() {
+            printGrid.innerHTML = '';
             
-            setTimeout(() => {
-                successAnimation.style.display = 'none';
-            }, 3000);
+            if (barcodes.length === 0) {
+                printGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-barcode"></i>
+                        <h3>Нет штрих-кодов</h3>
+                        <p>Создайте штрих-коды для ячеек, нажав кнопку "Создать штрих-код"</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            barcodes.forEach(barcode => {
+                createBarcodeElement(barcode);
+            });
         }
         
         // Update system stats
         function updateSystemStats() {
-            itemsCount.textContent = products.length;
+            const activeProducts = products.filter(p => p.status === 'active');
+            itemsCount.textContent = activeProducts.length;
+            barcodesCount.textContent = barcodes.length;
             
-            // Count unique cells
-            const uniqueCells = new Set(products.map(p => p.cell));
+            // Count unique cells with active products
+            const uniqueCells = new Set(activeProducts.map(p => p.cell));
             cellsCount.textContent = uniqueCells.size;
         }
         
-        // Save to localStorage
-        function saveToLocalStorage() {
-            localStorage.setItem('products', JSON.stringify(products));
+        // Update cell status
+        function updateCellStatus() {
+            const cells = ['P1', 'P2', 'P3'];
+            
+            cells.forEach(cell => {
+                const count = products.filter(p => p.cell === cell && p.status === 'active').length;
+                document.getElementById(`cell${cell}Count`).textContent = count;
+                
+                const statusElement = document.getElementById(`cell${cell}Status`);
+                if (count > 0) {
+                    statusElement.textContent = 'Заполнена';
+                    statusElement.className = 'cell-status status-active';
+                } else {
+                    statusElement.textContent = 'Пустая';
+                    statusElement.className = 'cell-status status-issued';
+                }
+            });
         }
         
-        // Initial sample data
-        function initializeSampleData() {
-            if (products.length === 0) {
-                products = [
-                    {id: "PRD-458712", name: "Ноутбук Dell XPS", barcode: "BC100458", cell: "P1"},
-                    {id: "PRD-982361", name: "Смартфон iPhone 13", barcode: "BC100982", cell: "P1"},
-                    {id: "PRD-125478", name: "Наушники Sony WH-1000XM4", barcode: "BC101254", cell: "P2"},
-                    {id: "PRD-364812", name: "Планшет Samsung Galaxy Tab", barcode: "BC103648", cell: "P2"},
-                    {id: "PRD-578496", name: "Флешка Kingston 128GB", barcode: "BC105784", cell: "P3"}
-                ];
-                saveToLocalStorage();
-                updateProductDisplay();
-                updateSystemStats();
-                
-                // Generate initial barcodes for printing
-                products.forEach(p => {
-                    generateBarcodeForPrinting(p.barcode, p.name);
-                });
-            } else {
-                updateProductDisplay();
-                updateSystemStats();
-            }
+        // Update last action
+        function updateLastAction(text) {
+            lastAction.textContent = text;
         }
     </script>
 </body>
